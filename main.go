@@ -63,6 +63,8 @@ func main() {
 				// fmt.Println(title, srv)
 
 				switch title {
+				case "About":
+					services.About(srv)
 				case "History":
 					services.History(srv)
 				case "Powers":
@@ -82,5 +84,6 @@ func main() {
 		fmt.Println(toolkit.JsonStringIndent(sh, "\n"))
 	})
 
-	c.Visit(baseUrl + "/nick-fury/10-16352/")
+	// c.Visit(baseUrl + "/nick-fury/10-16352/")
+	c.Visit(baseUrl + "/nick-fury/10-326/")
 }

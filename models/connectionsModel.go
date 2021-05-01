@@ -1,8 +1,8 @@
 package models
 
 type ConnectionModel struct {
-	Occupation string
+	Occupation []string
 	Base       string
-	Teams      []string
+	Teams      []UrlModel
 	Relatives  []string
 }
