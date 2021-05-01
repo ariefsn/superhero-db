@@ -1,16 +1,16 @@
 package models
 
 type EquipmentItemModel struct {
-	Title       string
-	Description string
+	Title       string `json:"title" bson:"title"`
+	Description string `json:"description" bson:"description"`
 }
 
 type EquipmentDetailsModel struct {
-	Summary string
-	Items   []EquipmentItemModel
+	Summary string               `json:"summary" bson:"summary"`
+	List    []EquipmentItemModel `json:"list" bson:"list"`
 }
 
 type ItemModel struct {
-	Equipment EquipmentDetailsModel
-	Weapon    EquipmentDetailsModel
+	Equipment EquipmentDetailsModel `json:"equipment" bson:"equipment"`
+	Weapon    EquipmentDetailsModel `json:"weapon" bson:"weapon"`
 }

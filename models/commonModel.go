@@ -1,6 +1,6 @@
 package models
 
 type UrlModel struct {
-	Name string
-	Url  string
+	Name string `json:"name" bson:"name"`
+	Url  string `json:"url" bson:"url"`
 }

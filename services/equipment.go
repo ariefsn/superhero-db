@@ -95,9 +95,9 @@ func EquipmentAndWeapons(s *Service) {
 					}
 
 					if k == "Weapons" {
-						res.Weapon.Items = append(res.Weapon.Items, newData)
+						res.Weapon.List = append(res.Weapon.List, newData)
 					} else {
-						res.Equipment.Items = append(res.Equipment.Items, newData)
+						res.Equipment.List = append(res.Equipment.List, newData)
 					}
 				}
 			}
