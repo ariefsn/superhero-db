@@ -10,7 +10,7 @@ type EquipmentDetailsModel struct {
 	Items   []EquipmentItemModel
 }
 
-type EquipmentModel struct {
+type ItemModel struct {
 	Equipment EquipmentDetailsModel
 	Weapon    EquipmentDetailsModel
 }

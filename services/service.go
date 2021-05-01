@@ -1,8 +1,11 @@
 package services
 
+import "github.com/ariefsn/superhero-db/models"
+
 type Service struct {
 	BaseUrl string
 	Href    string
+	Data    *models.SuperheroModel
 }
 
 func (s *Service) FullPath() string {

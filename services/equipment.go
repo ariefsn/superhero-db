@@ -6,14 +6,11 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/ariefsn/superhero-db/models"
-	"github.com/eaciit/toolkit"
 	"github.com/gocolly/colly"
 )
 
 func EquipmentAndWeapons(s *Service) {
 	c := colly.NewCollector()
-
-	// eq := new(Equipment)
 
 	c.OnHTML(".column.col-8.col-md-12", func(h *colly.HTMLElement) {
 		key := ""
@@ -55,7 +52,7 @@ func EquipmentAndWeapons(s *Service) {
 
 		splitText := map[string]string{}
 
-		res := new(models.EquipmentModel)
+		res := new(models.ItemModel)
 
 		for iH3, h3 := range listH3 {
 			h3Separator := s.separator("h3")
@@ -106,20 +103,7 @@ func EquipmentAndWeapons(s *Service) {
 			}
 		}
 
-		fmt.Println(toolkit.JsonStringIndent(res, "n"))
-
-		// for i, v := range split {
-		// 	if i == 0 {
-		// 		res.Summary = split[i]
-		// 	} else {
-		// 		res.Details = append(res.Details, PowerDetails{
-		// 			Title:       powerTitles[i-1],
-		// 			Description: v,
-		// 		})
-		// 	}
-		// }
-
-		// fmt.Println("res =>", res)
+		s.Data.Item = *res
 	})
 
 	c.OnRequest(func(r *colly.Request) {

@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/ariefsn/superhero-db/models"
-	"github.com/eaciit/toolkit"
 	"github.com/gocolly/colly"
 )
 
@@ -30,10 +29,6 @@ func Powers(s *Service) {
 
 		res := new(models.PowerModel)
 
-		fmt.Println("split =>", split)
-		fmt.Println("powerTitles =>", powerTitles)
-		fmt.Println(len(split), len(powerTitles))
-
 		for i, v := range split {
 			if i == 0 {
 				res.Summary = split[i]
@@ -45,7 +40,7 @@ func Powers(s *Service) {
 			}
 		}
 
-		fmt.Println(toolkit.JsonStringIndent(res, "n"))
+		s.Data.Powers = *res
 	})
 
 	c.OnRequest(func(r *colly.Request) {

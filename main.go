@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ariefsn/superhero-db/models"
 	"github.com/ariefsn/superhero-db/services"
+	"github.com/eaciit/toolkit"
 	"github.com/gocolly/colly"
 )
 
 const baseUrl = "https://www.superherodb.com"
 
 func main() {
+	sh := new(models.SuperheroModel)
 
 	c := colly.NewCollector()
 
@@ -25,10 +28,10 @@ func main() {
 		h3 := h.ChildText("h3")
 		portrait := baseUrl + h.ChildAttr("div.portrait > img", "src")
 
-		fmt.Println("h1", h1)
-		fmt.Println("h2", h2)
-		fmt.Println("h3", h3)
-		fmt.Println("portrait", portrait)
+		sh.Name = h1
+		sh.RealName = h2
+		sh.Origin.Universe.Name = h3
+		sh.Portrait = portrait
 	})
 
 	// Tabs
@@ -51,12 +54,11 @@ func main() {
 			if checkMainTabs(title) {
 				href := baseUrl + li.ChildAttr("a", "href")
 
-				fmt.Println(idx, title, href)
-
 				srv := new(services.Service)
 
 				srv.BaseUrl = baseUrl
 				srv.Href = href
+				srv.Data = sh
 
 				// fmt.Println(title, srv)
 
@@ -67,17 +69,17 @@ func main() {
 					services.Powers(srv)
 				case "Equipment":
 					services.EquipmentAndWeapons(srv)
+				case "Gallery":
+					services.Gallery(srv)
 				}
 			}
 		})
 	})
 
-	// // About
-	// c.OnHTML("div.profile-titles", func(h *colly.HTMLElement) {
-	// })
-
 	c.OnScraped(func(res *colly.Response) {
 		fmt.Println("Finished scrape:", res.Request.URL)
+
+		fmt.Println(toolkit.JsonStringIndent(sh, "\n"))
 	})
 
 	c.Visit(baseUrl + "/nick-fury/10-16352/")
