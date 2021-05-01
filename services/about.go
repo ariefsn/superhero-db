@@ -1,6 +1,7 @@
 package services
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/ariefsn/superhero-db/models"
@@ -23,6 +24,11 @@ func About(s *Service) {
 		}).Result()
 
 		return r.([]string)
+	}
+
+	extractText := func(text string) string {
+		re := regexp.MustCompile("[^a-zA-Z0-9 .'\"]+")
+		return re.ReplaceAllString(text, "")
 	}
 
 	c.OnHTML("table.profile-table", func(h *colly.HTMLElement) {
@@ -81,6 +87,22 @@ func About(s *Service) {
 							s.Data.Connections.Teams = teams
 						case 3:
 							s.Data.Connections.Relatives = clearList(strings.Split(td.Text, ";"))
+						}
+					} else if selectedTable == "Appearance" {
+						switch iTr {
+						case 0:
+							s.Data.Appearance.Gender = strings.TrimSpace(td.Text)
+						case 1:
+							s.Data.Appearance.Type.Name = td.Text
+							s.Data.Appearance.Type.Url = s.BaseUrl + td.ChildAttr("a", "href")
+						case 2:
+							s.Data.Appearance.Height = strings.Replace(extractText(strings.TrimSpace(td.Text)), "  ", " / ", 1)
+						case 3:
+							s.Data.Appearance.Weight = strings.Replace(extractText(strings.TrimSpace(td.Text)), "  ", " / ", 1)
+						case 4:
+							s.Data.Appearance.EyeColor = strings.TrimSpace(td.Text)
+						case 5:
+							s.Data.Appearance.HairColor = strings.TrimSpace(td.Text)
 						}
 					}
 				}
