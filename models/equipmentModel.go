@@ -14,3 +14,20 @@ type ItemModel struct {
 	Equipment EquipmentDetailsModel `json:"equipment" bson:"equipment"`
 	Weapon    EquipmentDetailsModel `json:"weapon" bson:"weapon"`
 }
+
+func NewEquipmentDetailsModel() *EquipmentDetailsModel {
+	m := new(EquipmentDetailsModel)
+
+	m.List = []EquipmentItemModel{}
+
+	return m
+}
+
+func NewItemModel() *ItemModel {
+	m := new(ItemModel)
+
+	m.Equipment = *NewEquipmentDetailsModel()
+	m.Weapon = *NewEquipmentDetailsModel()
+
+	return m
+}

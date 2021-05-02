@@ -8,3 +8,9 @@ type AppearanceModel struct {
 	EyeColor  string   `json:"eyeColor" bson:"eyeColor"`
 	HairColor string   `json:"hairColor" bson:"hairColor"`
 }
+
+func NewAppearanceModel() *AppearanceModel {
+	m := new(AppearanceModel)
+
+	return m
+}

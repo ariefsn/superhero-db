@@ -9,3 +9,11 @@ type PowerModel struct {
 	Summary string              `json:"summary" bson:"summary"`
 	Details []PowerDetailsModel `json:"details" bson:"details"`
 }
+
+func NewPowerModel() *PowerModel {
+	m := new(PowerModel)
+
+	m.Details = []PowerDetailsModel{}
+
+	return m
+}

@@ -6,3 +6,13 @@ type ConnectionModel struct {
 	Teams      []UrlModel `json:"teams" bson:"teams"`
 	Relatives  []string   `json:"relatives" bson:"relatives"`
 }
+
+func NewConnectionModel() *ConnectionModel {
+	m := new(ConnectionModel)
+
+	m.Occupation = []string{}
+	m.Teams = []UrlModel{}
+	m.Relatives = []string{}
+
+	return m
+}

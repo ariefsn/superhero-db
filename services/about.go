@@ -1,35 +1,22 @@
 package services
 
 import (
-	"regexp"
+	"fmt"
 	"strings"
+	"time"
 
+	"github.com/ariefsn/superhero-db/helper"
 	"github.com/ariefsn/superhero-db/models"
+	"github.com/eaciit/toolkit"
 	"github.com/gocolly/colly"
-	"github.com/novalagung/gubrak"
 )
 
 func About(s *Service) {
-	c := colly.NewCollector()
+	help := helper.Helper{}
+
+	c := help.NewCollector()
 
 	selectedTable := ""
-
-	clearList := func(list []string) []string {
-		r := gubrak.From(list).Map(func(each string, i int) string {
-			return strings.TrimSpace(each)
-		}).Result()
-
-		r = gubrak.From(r).Filter(func(each string, i int) bool {
-			return each != ""
-		}).Result()
-
-		return r.([]string)
-	}
-
-	extractText := func(text string) string {
-		re := regexp.MustCompile("[^a-zA-Z0-9 .'\"]+")
-		return re.ReplaceAllString(text, "")
-	}
 
 	c.OnHTML("table.profile-table", func(h *colly.HTMLElement) {
 		h.ForEach("tr", func(iTr int, tr *colly.HTMLElement) {
@@ -58,7 +45,20 @@ func About(s *Service) {
 						case 2:
 							s.Data.Origin.FullName = td.Text
 						case 3:
-							s.Data.Origin.AlterEgos = strings.TrimSpace(td.Text)
+							alterEgos := []models.AlterEgosModel{}
+
+							td.ForEach(".shdbcard3.cat-10.card-xs", func(iAe int, ae *colly.HTMLElement) {
+								alterEgos = append(alterEgos, models.AlterEgosModel{
+									Url:      ae.ChildAttr("a", "href"),
+									Class:    ae.ChildText(".shdbclass span"),
+									Verse:    ae.ChildText(".verse span"),
+									Name:     ae.ChildText(".name"),
+									RealName: ae.ChildText(".realname"),
+									Image:    s.BaseUrl + ae.ChildAttr("div.image img", "src"),
+								})
+							})
+
+							s.Data.Origin.AlterEgos = alterEgos
 						case 4:
 							s.Data.Origin.Aliases = strings.Split(td.Text, ", ")
 						case 5:
@@ -71,7 +71,7 @@ func About(s *Service) {
 					} else if selectedTable == "Connections" {
 						switch iTr {
 						case 0:
-							s.Data.Connections.Occupation = clearList(strings.Split(td.Text, ";"))
+							s.Data.Connections.Occupation = help.ClearList(strings.Split(td.Text, ";"))
 						case 1:
 							s.Data.Connections.Base = strings.TrimSpace(td.Text)
 						case 2:
@@ -86,7 +86,7 @@ func About(s *Service) {
 
 							s.Data.Connections.Teams = teams
 						case 3:
-							s.Data.Connections.Relatives = clearList(strings.Split(td.Text, ";"))
+							s.Data.Connections.Relatives = help.ClearList(strings.Split(td.Text, ";"))
 						}
 					} else if selectedTable == "Appearance" {
 						switch iTr {
@@ -96,9 +96,9 @@ func About(s *Service) {
 							s.Data.Appearance.Type.Name = td.Text
 							s.Data.Appearance.Type.Url = s.BaseUrl + td.ChildAttr("a", "href")
 						case 2:
-							s.Data.Appearance.Height = strings.Replace(extractText(strings.TrimSpace(td.Text)), "  ", " / ", 1)
+							s.Data.Appearance.Height = strings.Replace(help.ExtractText(strings.TrimSpace(td.Text)), "  ", " / ", 1)
 						case 3:
-							s.Data.Appearance.Weight = strings.Replace(extractText(strings.TrimSpace(td.Text)), "  ", " / ", 1)
+							s.Data.Appearance.Weight = strings.Replace(help.ExtractText(strings.TrimSpace(td.Text)), "  ", " / ", 1)
 						case 4:
 							s.Data.Appearance.EyeColor = strings.TrimSpace(td.Text)
 						case 5:
@@ -110,5 +110,39 @@ func About(s *Service) {
 		})
 	})
 
+	c.OnHTML(".stat-value", func(h *colly.HTMLElement) {
+		fmt.Println(h.Attr("class"), h.Text)
+	})
+
+	c.OnHTML(".stat-bar", func(h *colly.HTMLElement) {
+		fmt.Println("after", time.Now(), "==>", len(h.DOM.Children().Nodes), h.ChildText("label"), "==>", h.ChildText(".stat-value"))
+		fmt.Println(h.DOM.Text())
+
+		val := toolkit.ToInt(h.ChildText(".stat-value"), "")
+
+		switch strings.ToLower(h.ChildText("label")) {
+		case "intelligence":
+			s.Data.PowerStats.Intelligence = val
+		case "stregth":
+			s.Data.PowerStats.Strength = val
+		case "speed":
+			s.Data.PowerStats.Speed = val
+		case "durability":
+			s.Data.PowerStats.Durability = val
+		case "power":
+			s.Data.PowerStats.Power = val
+		case "combat":
+			s.Data.PowerStats.Intelligence = val
+		case "tier":
+			s.Data.PowerStats.Intelligence = val
+		}
+	})
+
+	c.OnScraped(func(res *colly.Response) {
+		fmt.Println("Finished scrape:", res.Request.URL)
+	})
+
 	c.Visit(s.Href)
+
+	c.Wait()
 }

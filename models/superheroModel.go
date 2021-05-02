@@ -13,3 +13,17 @@ type SuperheroModel struct {
 	Item        ItemModel       `json:"item" bson:"item"`
 	Gallery     []GalleryModel  `json:"gallery" bson:"gallery"`
 }
+
+func NewSuperheroModel() *SuperheroModel {
+	m := new(SuperheroModel)
+
+	m.PowerStats = *NewPowerStatsModel()
+	m.Origin = *NewOriginModel()
+	m.Appearance = *NewAppearanceModel()
+	m.Connections = *NewConnectionModel()
+	m.Powers = *NewPowerModel()
+	m.Item = *NewItemModel()
+	m.Gallery = []GalleryModel{}
+
+	return m
+}

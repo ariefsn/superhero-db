@@ -9,3 +9,17 @@ type PowerStatsModel struct {
 	Combat       int `json:"combat" bson:"combat"`
 	Tier         int `json:"tier" bson:"tier"`
 }
+
+func NewPowerStatsModel() *PowerStatsModel {
+	m := new(PowerStatsModel)
+
+	m.Intelligence = 0
+	m.Strength = 0
+	m.Speed = 0
+	m.Durability = 0
+	m.Power = 0
+	m.Combat = 0
+	m.Tier = 0
+
+	return m
+}
