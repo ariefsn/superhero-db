@@ -2,7 +2,10 @@ package helper
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
+	"path"
 	"regexp"
 	"strings"
 	"time"
@@ -46,12 +49,30 @@ func (h *Helper) ExtractText(text string) string {
 	return re.ReplaceAllString(text, "")
 }
 
-func (h *Helper) WriteJsonFile(data interface{}, fileName string) {
+func (h *Helper) WriteJsonFile(data interface{}, prefix, fileName string) {
 	file, _ := json.MarshalIndent(data, "", "\t")
 
 	if fileName == "" {
 		fileName = "test"
 	}
 
-	_ = ioutil.WriteFile(fileName+".json", file, 0644)
+	dir, _ := os.Getwd()
+
+	fileName += ".json"
+
+	dirPath := path.Join(dir, "data")
+
+	if prefix != "" {
+		dirPath = path.Join(dirPath, prefix)
+	}
+
+	if _, err := os.Stat(dirPath); os.IsNotExist(err) {
+		os.MkdirAll(dirPath, os.ModePerm)
+	}
+
+	fullPath := path.Join(dirPath, fileName)
+
+	_ = ioutil.WriteFile(fullPath, file, 0644)
+
+	fmt.Println("Saved as ", fullPath)
 }

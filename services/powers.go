@@ -25,7 +25,7 @@ func Powers(s *Service) {
 
 			powerTitles = append(powerTitles, powerTitle)
 
-			powers = strings.TrimSpace(strings.ReplaceAll(powers, powerTitle, "***"))
+			powers = strings.TrimSpace(strings.Replace(powers, powerTitle, "***", 1))
 		})
 
 		split := strings.Split(strings.TrimSpace(powers), "***")
@@ -38,7 +38,7 @@ func Powers(s *Service) {
 			} else {
 				res.Details = append(res.Details, models.PowerDetailsModel{
 					Title:       powerTitles[i-1],
-					Description: v,
+					Description: help.ExtractText(v),
 				})
 			}
 		}
