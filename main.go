@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ariefsn/superhero-db/helper"
 	"github.com/ariefsn/superhero-db/models"
 	"github.com/ariefsn/superhero-db/services"
-	"github.com/eaciit/toolkit"
 	"github.com/gocolly/colly"
 )
 
 const baseUrl = "https://www.superherodb.com"
 
 func main() {
-	sh := new(models.SuperheroModel)
+	sh := models.NewSuperheroModel()
 
-	c := colly.NewCollector()
+	help := helper.Helper{}
+
+	c := help.NewCollector()
 
 	c.OnError(func(_ *colly.Response, err error) {
 		log.Println("Something went wrong:", err)
@@ -81,9 +83,13 @@ func main() {
 	c.OnScraped(func(res *colly.Response) {
 		fmt.Println("Finished scrape:", res.Request.URL)
 
-		fmt.Println(toolkit.JsonStringIndent(sh, "\n"))
+		// fmt.Println(toolkit.JsonStringIndent(sh, "\n"))
+		help.WriteJsonFile(sh, "new")
 	})
 
 	// c.Visit(baseUrl + "/nick-fury/10-16352/")
-	c.Visit(baseUrl + "/nick-fury/10-326/")
+	// c.Visit(baseUrl + "/nick-fury/10-326/")
+	c.Visit(baseUrl + "/captain-america/10-12495/")
+
+	c.Wait()
 }

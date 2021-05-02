@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ariefsn/superhero-db/helper"
 	"github.com/ariefsn/superhero-db/models"
 	"github.com/gocolly/colly"
 )
 
 func Powers(s *Service) {
-	c := colly.NewCollector()
+	help := helper.Helper{}
+
+	c := help.NewCollector()
 
 	c.OnHTML(".column.col-8.col-md-12", func(h *colly.HTMLElement) {
 		t := h.ChildText("h3")
@@ -27,7 +30,7 @@ func Powers(s *Service) {
 
 		split := strings.Split(strings.TrimSpace(powers), "***")
 
-		res := new(models.PowerModel)
+		res := models.NewPowerModel()
 
 		for i, v := range split {
 			if i == 0 {
@@ -43,9 +46,11 @@ func Powers(s *Service) {
 		s.Data.Powers = *res
 	})
 
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("powers req:", r.URL, s.Href)
+	c.OnScraped(func(res *colly.Response) {
+		fmt.Println("Finished scrape:", res.Request.URL)
 	})
 
 	c.Visit(s.Href)
+
+	c.Wait()
 }

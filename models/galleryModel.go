@@ -3,9 +3,9 @@ package models
 import "strings"
 
 type GalleryModel struct {
-	Sm string
-	Md string
-	Lg string
+	Sm string `json:"sm" bson:"sm"`
+	Md string `json:"md" bson:"md"`
+	Lg string `json:"lg" bson:"lg"`
 }
 
 func NewGalleryModel(baseUrl, path string) *GalleryModel {
