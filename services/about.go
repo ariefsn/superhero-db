@@ -3,7 +3,6 @@ package services
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/ariefsn/superhero-db/helper"
 	"github.com/ariefsn/superhero-db/models"
@@ -17,6 +16,19 @@ func About(s *Service) {
 	c := help.NewCollector()
 
 	selectedTable := ""
+
+	c.OnHTML(".column.col-12", func(h *colly.HTMLElement) {
+		h3 := h.ChildText("h3")
+
+		if strings.TrimSpace(strings.ToLower(h3)) == "super powers" {
+			h.ForEach("a", func(iA int, a *colly.HTMLElement) {
+				s.Data.SuperPower = append(s.Data.SuperPower, models.UrlModel{
+					Name: a.Text,
+					Url:  s.BaseUrl + a.Attr("href"),
+				})
+			})
+		}
+	})
 
 	c.OnHTML("table.profile-table", func(h *colly.HTMLElement) {
 		h.ForEach("tr", func(iTr int, tr *colly.HTMLElement) {
@@ -110,14 +122,7 @@ func About(s *Service) {
 		})
 	})
 
-	c.OnHTML(".stat-value", func(h *colly.HTMLElement) {
-		fmt.Println(h.Attr("class"), h.Text)
-	})
-
 	c.OnHTML(".stat-bar", func(h *colly.HTMLElement) {
-		fmt.Println("after", time.Now(), "==>", len(h.DOM.Children().Nodes), h.ChildText("label"), "==>", h.ChildText(".stat-value"))
-		fmt.Println(h.DOM.Text())
-
 		val := toolkit.ToInt(h.ChildText(".stat-value"), "")
 
 		switch strings.ToLower(h.ChildText("label")) {

@@ -6,6 +6,7 @@ type SuperheroModel struct {
 	Portrait    string          `json:"portrait" bson:"portrait"`
 	History     string          `json:"history" bson:"history"`
 	PowerStats  PowerStatsModel `json:"powerStats" bson:"powerStats"`
+	SuperPower  []UrlModel      `json:"superPower" bson:"superPower"`
 	Origin      OriginModel     `json:"origin" bson:"origin"`
 	Appearance  AppearanceModel `json:"appearance" bson:"appearance"`
 	Connections ConnectionModel `json:"connections" bson:"connections"`
@@ -24,6 +25,7 @@ func NewSuperheroModel() *SuperheroModel {
 	m.Powers = *NewPowerModel()
 	m.Item = *NewItemModel()
 	m.Gallery = []GalleryModel{}
+	m.SuperPower = []UrlModel{}
 
 	return m
 }
